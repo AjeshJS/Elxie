@@ -1,0 +1,10 @@
+{
+  "_comment": "Each version maps to one of the RGB test builds so you can SEE the flash working. Pick a version, flash, watch the board change.",
+  "versions": [
+    { "name": "v1.2.0", "channel": "stable", "note": "blink 500ms", "manifest": "manifests/elxie-v1.2.0.json" },
+    { "name": "v1.1.3", "channel": "stable", "note": "blink 100ms", "manifest": "manifests/elxie-v1.1.3.json" },
+    { "name": "v1.1.0", "channel": "stable", "note": "solid red",   "manifest": "manifests/elxie-v1.1.0.json" },
+    { "name": "v1.0.2", "channel": "stable", "note": "solid green", "manifest": "manifests/elxie-v1.0.2.json" },
+    { "name": "v1.0.0", "note": "solid blue", "manifest": "manifests/elxie-v1.0.0.json" }
+  ]
+}
