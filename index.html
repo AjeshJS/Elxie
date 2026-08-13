@@ -7,15 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<!-- Flashing library. jsDelivr is used because ad blockers rarely touch it.
-     If it fails to load for any reason, window.__espLoadFailed is set so the
-     page can warn the user instead of the button silently doing nothing. -->
-<script type="module">
-  window.__espLoaded = false;
-  import("https://cdn.jsdelivr.net/npm/esp-web-tools@10/dist/web/install-button.js/+esm")
-    .then(() => { window.__espLoaded = true; window.dispatchEvent(new Event('esp-ready')); })
-    .catch((e) => { window.__espLoadFailed = true; window.dispatchEvent(new Event('esp-failed')); console.error('Flashing library failed to load:', e); });
-</script>
+<!-- Flashing engine (esp-web-tools). Standard module load from unpkg.
+     onload/onerror set flags so the button is never a silent dead end. -->
+<script
+  type="module"
+  src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"
+  onload="window.__espLoaded=true;window.dispatchEvent(new Event('esp-ready'));"
+  onerror="window.__espLoadFailed=true;window.dispatchEvent(new Event('esp-failed'));"
+></script>
 <style>
   :root{
     --ink:#141b2e;
@@ -576,13 +575,24 @@ window.addEventListener('esp-failed', libBlocked);
     btn.style.cursor = 'not-allowed';
     fineprint.innerHTML = '<b>This browser can\'t flash Elxie.</b> Open this page in <b>Chrome</b>, <b>Edge</b>, or <b>Opera</b> on a desktop computer.';
     setPill('err', 'Unsupported browser');
+    return;
   }
   loadVersions();
 
-  // If the library hasn't loaded or failed within 6s, assume it was blocked.
-  setTimeout(() => {
-    if(!window.__espLoaded && !window.__espLoadFailed) libBlocked();
-  }, 6000);
+  // The real test of "is flashing ready" is whether the custom element
+  // actually registered. Poll for it; warn clearly if it never shows up.
+  let waited = 0;
+  const poll = setInterval(() => {
+    if(customElements.get('esp-web-install-button')){
+      window.__espLoaded = true;
+      clearInterval(poll);
+      if(!flashing){ setPill('', 'Ready — plug in & flash'); }
+    } else if((waited += 300) >= 8000){
+      clearInterval(poll);
+      window.__espLoadFailed = true;
+      libBlocked();
+    }
+  }, 300);
 })();
 </script>
 </body>
