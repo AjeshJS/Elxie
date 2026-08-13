@@ -1,0 +1,13 @@
+{
+  "name": "Elxie",
+  "version": "v1.3.0-beta.2",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "../firmware/elxie-v1.3.0-beta.2.bin", "offset": 0 }
+      ]
+    }
+  ]
+}
